@@ -269,4 +269,4 @@ file at `/warehouse/botola.duckdb`.
 
 ## License
 
-Released under the MIT License. Add a `LICENSE` file to make this official.
+Released under the [MIT License](LICENSE).
