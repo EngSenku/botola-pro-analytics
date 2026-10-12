@@ -53,7 +53,7 @@ models:
       One row per player per valid period (SCD Type 2).
       Handles player transfers: when a player moves clubs, a new record is inserted
       with a new valid_from and is_current = true, and the old record gets valid_to = transfer date.
-      Answers Q12 (transfer impact on stats).
+      Supports tracking how transfers affect player stats.
     columns:
       - name: player_id
         description: Unique player identifier from API-Football

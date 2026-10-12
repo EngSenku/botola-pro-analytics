@@ -4,7 +4,7 @@ models:
   - name: fct_standings
     description: >
       Current league table for the active season.
-      One row per team. Answers Q1: league table with points, GD, wins, losses.
+      One row per team, with points, goal difference, wins and losses.
       Position is computed via window function ordered by points desc, then goal difference.
     columns:
       - name: team_name
@@ -138,7 +138,7 @@ models:
   - name: fct_top_scorers
     description: >
       Player scoring and assist stats for the current season.
-      One row per player. Answers Q4 (top scorers) and Q10 (efficiency per 90 mins).
+      One row per player, including efficiency per 90 minutes.
       Includes computed goals_per_90 and assists_per_90.
     columns:
       - name: player_name
@@ -196,7 +196,7 @@ models:
   - name: fct_form_table
     description: >
       Each team's form over their last 5 matches.
-      Answers Q2. Includes a form_string like 'WWDLW' for display in Metabase.
+      Includes a form_string like 'WWDLW' for display in Metabase.
     columns:
       - name: team_name
         description: Team name, unique in this table
@@ -244,7 +244,7 @@ models:
   - name: fct_points_progression
     description: >
       Cumulative points per team per matchweek.
-      Answers Q7: used to draw the season trend line chart in Metabase.
+      Used to draw the season trend line chart in Metabase.
       One row per team per matchweek.
     columns:
       - name: team_name
@@ -283,7 +283,7 @@ models:
   - name: fct_market_values
     description: >
       Squad total and average market value per team, joined to current league position.
-      Answers Q11: does squad market value correlate with league position?
+      Lets you compare squad market value against league position.
       Sourced from Transfermarkt scraper, joined to fct_standings.
     columns:
       - name: team_slug
@@ -314,7 +314,6 @@ models:
   - name: fct_champions_history
     description: >
       Every Botola Pro season champion since 1956, scraped from Wikipedia.
-      Answers Q13 (most titles) and Q15 (historical dominance).
       Includes a total_titles window count per club.
     columns:
       - name: champion_team
