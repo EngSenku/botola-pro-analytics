@@ -1,0 +1,140 @@
+version: 2
+
+models:
+  - name: int_matches
+    description: >
+      Cleaned and unified match results from all sources (API-Football + TheSportsDB + Kaggle CSV).
+      One row per completed match. This is the single source of truth for match results —
+      all fact tables that need match data reference this model, not staging directly.
+    columns:
+      - name: match_id
+        description: Unique match identifier (from API-Football fixture_id or TheSportsDB event_id)
+        tests:
+          - unique
+          - not_null
+
+      - name: home_team
+        description: Full name of the home team
+        tests:
+          - not_null
+
+      - name: away_team
+        description: Full name of the away team
+        tests:
+          - not_null
+
+      - name: match_date
+        description: Date the match was played
+        tests:
+          - not_null
+
+      - name: home_goals
+        description: Goals scored by home team (final score)
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 20
+
+      - name: away_goals
+        description: Goals scored by away team (final score)
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 20
+
+      - name: result
+        description: Match result from home team perspective — H (home win), A (away win), D (draw)
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["H", "A", "D"]
+
+      - name: matchweek
+        description: Round/matchweek number as string
+
+      - name: source
+        description: Which data source this row came from
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["api_football", "thesportsdb", "kaggle_csv"]
+
+  - name: int_team_season_stats
+    description: >
+      One row per team per match, with home and away results unpivoted into a single table.
+      Each team appears twice per match — once as home, once as away.
+      This is the base model for all aggregated team performance metrics:
+      standings, form table, points progression, home vs away analysis.
+    columns:
+      - name: team_name
+        description: Full team name
+        tests:
+          - not_null
+
+      - name: match_date
+        description: Date of the match
+        tests:
+          - not_null
+
+      - name: matchweek
+        description: Round number
+
+      - name: gf
+        description: Goals scored by this team in this match
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 20
+
+      - name: ga
+        description: Goals conceded by this team in this match
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 20
+
+      - name: pts
+        description: Points earned in this match — 3 (win), 1 (draw), 0 (loss)
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1, 3]
+
+      - name: won
+        description: 1 if the team won, 0 otherwise
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1]
+
+      - name: drawn
+        description: 1 if the match was drawn, 0 otherwise
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1]
+
+      - name: lost
+        description: 1 if the team lost, 0 otherwise
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1]
+
+      - name: clean_sheet
+        description: 1 if the team conceded zero goals, 0 otherwise
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1]
+
+      - name: venue
+        description: Whether this team played at home or away
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["home", "away"]

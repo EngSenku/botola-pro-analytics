@@ -1,0 +1,336 @@
+version: 2
+
+models:
+  - name: fct_standings
+    description: >
+      Current league table for the active season.
+      One row per team. Answers Q1: league table with points, GD, wins, losses.
+      Position is computed via window function ordered by points desc, then goal difference.
+    columns:
+      - name: team_name
+        description: Full team name — unique identifier in this table
+        tests:
+          - unique
+          - not_null
+
+      - name: played
+        description: Total matches played
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 38
+
+      - name: won
+        description: Matches won
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: drawn
+        description: Matches drawn
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: lost
+        description: Matches lost
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: goals_for
+        description: Total goals scored
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: goals_against
+        description: Total goals conceded
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: goal_diff
+        description: Goals scored minus goals conceded
+        tests:
+          - not_null
+
+      - name: points
+        description: Total points accumulated
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: position
+        description: Current league position (1 = top)
+        tests:
+          - unique
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+
+      - name: clean_sheets
+        description: Number of matches where the team conceded zero goals
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+  - name: fct_matches
+    description: >
+      One row per completed match. Full match record including both teams,
+      goals, result, and matchweek. Used for detailed match-level analysis.
+    columns:
+      - name: match_id
+        description: Unique match identifier
+        tests:
+          - unique
+          - not_null
+
+      - name: home_team
+        description: Home team name
+        tests:
+          - not_null
+
+      - name: away_team
+        description: Away team name
+        tests:
+          - not_null
+
+      - name: match_date
+        description: Date the match was played
+        tests:
+          - not_null
+
+      - name: home_goals
+        description: Home team goals scored
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: away_goals
+        description: Away team goals scored
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: result
+        description: H (home win), A (away win), D (draw)
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["H", "A", "D"]
+
+      - name: source
+        description: Origin data source
+        tests:
+          - not_null
+
+  - name: fct_top_scorers
+    description: >
+      Player scoring and assist stats for the current season.
+      One row per player. Answers Q4 (top scorers) and Q10 (efficiency per 90 mins).
+      Includes computed goals_per_90 and assists_per_90.
+    columns:
+      - name: player_name
+        description: Full player name
+        tests:
+          - not_null
+
+      - name: team_name
+        description: Team the player belongs to
+        tests:
+          - not_null
+
+      - name: goals
+        description: Total goals scored
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: assists
+        description: Total assists — coalesced to 0 if null
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: minutes_played
+        description: Total minutes played in the season
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 3060
+
+      - name: goals_per_90
+        description: Goals scored per 90 minutes played
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 5
+
+      - name: assists_per_90
+        description: Assists per 90 minutes played
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 5
+
+      - name: goal_contributions
+        description: Goals plus assists combined
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+  - name: fct_form_table
+    description: >
+      Each team's form over their last 5 matches.
+      Answers Q2. Includes a form_string like 'WWDLW' for display in Metabase.
+    columns:
+      - name: team_name
+        description: Team name — unique in this table
+        tests:
+          - unique
+          - not_null
+
+      - name: w
+        description: Wins in last 5 matches
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 5
+
+      - name: d
+        description: Draws in last 5 matches
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 5
+
+      - name: l
+        description: Losses in last 5 matches
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 5
+
+      - name: form_pts
+        description: Points earned in last 5 matches (max 15)
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 15
+
+      - name: form_string
+        description: Compact result string e.g. WWDLW ordered most recent first
+        tests:
+          - not_null
+
+  - name: fct_points_progression
+    description: >
+      Cumulative points per team per matchweek.
+      Answers Q7 — used to draw the season trend line chart in Metabase.
+      One row per team per matchweek.
+    columns:
+      - name: team_name
+        description: Team name
+        tests:
+          - not_null
+
+      - name: matchweek
+        description: Matchweek string as stored in source data
+        tests:
+          - not_null
+
+      - name: week_num
+        description: Matchweek as integer for correct chart ordering
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 38
+
+      - name: pts_this_week
+        description: Points earned in this specific matchweek
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 9
+
+      - name: cumulative_points
+        description: Running total of points from matchweek 1 to this week
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+  - name: fct_market_values
+    description: >
+      Squad total and average market value per team, joined to current league position.
+      Answers Q11 — does squad market value correlate with league position?
+      Sourced from Transfermarkt scraper, joined to fct_standings.
+    columns:
+      - name: team_slug
+        description: URL slug used to match Transfermarkt team to standings (e.g. wydad-ac)
+        tests:
+          - not_null
+
+      - name: total_squad_value
+        description: Sum of all player market values in EUR
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: avg_player_value
+        description: Average individual player market value in EUR
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: squad_size
+        description: Number of players with a recorded market value
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 35
+
+  - name: fct_champions_history
+    description: >
+      Every Botola Pro season champion since 1956, scraped from Wikipedia.
+      Answers Q13 (most titles) and Q15 (historical dominance).
+      Includes a total_titles window count per club.
+    columns:
+      - name: champion_team
+        description: Name of the championship-winning team
+        tests:
+          - not_null
+
+      - name: season_label
+        description: Season identifier e.g. 2023-24
+        tests:
+          - unique
+          - not_null
+
+      - name: total_titles
+        description: Total number of Botola Pro titles won by this club across all seasons
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1

@@ -1,0 +1,19 @@
+version: 2
+
+models:
+  - name: stg_fixtures
+    tests:
+      - assert_sources_agree_on_result
+    columns:
+      - name: match_id
+        tests: [unique, not_null]
+      - name: home_goals
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 20
+      - name: result
+        tests:
+          - accepted_values:
+              values: ["H", "A", "D"]

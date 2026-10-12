@@ -1,0 +1,14 @@
+version: 2
+sources:
+  - name: raw
+    database: botola
+    schema: raw
+    tables:
+      - name: fixtures
+      - name: standings
+      - name: top_scorers
+      - name: teams
+      - name: historical_results
+      - name: market_values
+      - name: champions_history
+      - name: historical_csv

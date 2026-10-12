@@ -1,0 +1,7 @@
+botola_bi:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: ../warehouse/botola.duckdb
+      schema: marts
