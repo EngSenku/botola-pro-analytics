@@ -29,13 +29,13 @@ The `warehouse/` directory is mounted into the container by
 
 The marts layer is designed to power these dashboards:
 
-- **League table** — `fct_standings`
-- **Form** — `fct_form_table` (includes the `WDL` string)
-- **Points progression** — `fct_points_progression`
-- **Top scorers** — `fct_top_scorers`
-- **Match results** — `fct_matches`
-- **Market value vs position** — `fct_market_values`
-- **Champions history** — `fct_champions_history`
+- **League table**: `fct_standings`
+- **Form**: `fct_form_table` (includes the `WDL` string)
+- **Points progression**: `fct_points_progression`
+- **Top scorers**: `fct_top_scorers`
+- **Match results**: `fct_matches`
+- **Market value vs position**: `fct_market_values`
+- **Champions history**: `fct_champions_history`
 
 ## Refresh
 

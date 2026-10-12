@@ -8,7 +8,7 @@ models:
       Position is computed via window function ordered by points desc, then goal difference.
     columns:
       - name: team_name
-        description: Full team name — unique identifier in this table
+        description: Full team name, unique in this table
         tests:
           - unique
           - not_null
@@ -159,7 +159,7 @@ models:
               min_value: 0
 
       - name: assists
-        description: Total assists — coalesced to 0 if null
+        description: Total assists, coalesced to 0 if null
         tests:
           - not_null
           - dbt_utils.accepted_range:
@@ -199,7 +199,7 @@ models:
       Answers Q2. Includes a form_string like 'WWDLW' for display in Metabase.
     columns:
       - name: team_name
-        description: Team name — unique in this table
+        description: Team name, unique in this table
         tests:
           - unique
           - not_null
@@ -244,7 +244,7 @@ models:
   - name: fct_points_progression
     description: >
       Cumulative points per team per matchweek.
-      Answers Q7 — used to draw the season trend line chart in Metabase.
+      Answers Q7: used to draw the season trend line chart in Metabase.
       One row per team per matchweek.
     columns:
       - name: team_name
@@ -283,7 +283,7 @@ models:
   - name: fct_market_values
     description: >
       Squad total and average market value per team, joined to current league position.
-      Answers Q11 — does squad market value correlate with league position?
+      Answers Q11: does squad market value correlate with league position?
       Sourced from Transfermarkt scraper, joined to fct_standings.
     columns:
       - name: team_slug

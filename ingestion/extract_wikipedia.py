@@ -20,7 +20,7 @@ def load_champions():
     tables = pd.read_html(StringIO(response.text))
 
     # Table 13: ['Rank', 'Club', 'Winners', 'Seasons']
-    # Table 16: ['Teams', '11-12', ...] — season by season results
+    # Table 16: ['Teams', '11-12', ...] holds the season-by-season results
     champions_table = tables[13]
     print(f"Columns: {list(champions_table.columns)}")
     print(champions_table.head(3))

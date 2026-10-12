@@ -56,6 +56,6 @@ with DAG(
         bash_command="cd /opt/airflow/transform && dbt docs generate --profiles-dir .",
     )
 
-    # parallel ingestion → dbt run → dbt test → docs
+    # ingestion runs in parallel, then dbt run, dbt test and docs generate
     [ingest_apifootball, ingest_sportsdb,
      ingest_transfermarkt, ingest_wikipedia] >> dbt_run >> dbt_test >> dbt_docs

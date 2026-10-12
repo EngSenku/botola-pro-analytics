@@ -43,7 +43,7 @@ def load_market_values():
 
         r = requests.get(url, headers=HEADERS, timeout=15)
         if r.status_code != 200:
-            print(f"  Skipped {team_slug} — status {r.status_code}")
+            print(f"  Skipped {team_slug} (status {r.status_code})")
             continue
 
         soup = BeautifulSoup(r.content, "lxml")

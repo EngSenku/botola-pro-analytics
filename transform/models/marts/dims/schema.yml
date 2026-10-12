@@ -5,7 +5,7 @@ models:
   - name: dim_teams
     description: >
       One row per team per valid period (SCD Type 2).
-      Tracks team metadata over time — name, stadium, city, badge.
+      Tracks team metadata over time: name, stadium, city, badge.
       is_current = true flags the active record for each team.
       valid_from / valid_to define the period each record was accurate.
     columns:
@@ -51,7 +51,7 @@ models:
   - name: dim_players
     description: >
       One row per player per valid period (SCD Type 2).
-      Handles player transfers — when a player moves clubs, a new record is inserted
+      Handles player transfers: when a player moves clubs, a new record is inserted
       with a new valid_from and is_current = true, and the old record gets valid_to = transfer date.
       Answers Q12 (transfer impact on stats).
     columns:

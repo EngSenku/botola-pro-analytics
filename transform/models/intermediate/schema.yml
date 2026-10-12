@@ -4,7 +4,7 @@ models:
   - name: int_matches
     description: >
       Cleaned and unified match results from all sources (API-Football + TheSportsDB + Kaggle CSV).
-      One row per completed match. This is the single source of truth for match results —
+      One row per completed match. This is the single source of truth for match results.
       all fact tables that need match data reference this model, not staging directly.
     columns:
       - name: match_id
@@ -45,7 +45,7 @@ models:
               max_value: 20
 
       - name: result
-        description: Match result from home team perspective — H (home win), A (away win), D (draw)
+        description: "Match result from the home team's perspective: H (home win), A (away win), D (draw)"
         tests:
           - not_null
           - accepted_values:
@@ -64,7 +64,7 @@ models:
   - name: int_team_season_stats
     description: >
       One row per team per match, with home and away results unpivoted into a single table.
-      Each team appears twice per match — once as home, once as away.
+      Each team appears twice per match, once as home and once as away.
       This is the base model for all aggregated team performance metrics:
       standings, form table, points progression, home vs away analysis.
     columns:
@@ -98,7 +98,7 @@ models:
               max_value: 20
 
       - name: pts
-        description: Points earned in this match — 3 (win), 1 (draw), 0 (loss)
+        description: "Points earned in this match: 3 (win), 1 (draw), 0 (loss)"
         tests:
           - not_null
           - accepted_values:

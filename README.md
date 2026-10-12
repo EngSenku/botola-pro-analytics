@@ -44,7 +44,7 @@ flowchart LR
         A5[Kaggle CSV]
     end
 
-    subgraph Ingestion["Ingestion (dlt) — plain Python"]
+    subgraph Ingestion["Ingestion (dlt), plain Python"]
         B[extract_*.py]
     end
 
@@ -108,30 +108,30 @@ Each extractor is a standalone script that writes its own resources into the
 
 The dbt project is organised into three layers:
 
-**Staging** (`transform/models/staging`) — one model per source, light typing
+**Staging** (`transform/models/staging`): one model per source, light typing
 and column renaming:
 
 - `stg_fixtures`, `stg_standings`, `stg_players`, `stg_player_stats`,
   `stg_market_values`, `stg_champions`
 
-**Intermediate** (`transform/models/intermediate`) — reusable business logic:
+**Intermediate** (`transform/models/intermediate`): reusable business logic
 
-- `int_matches` — unified, de-duplicated match results from every source
-- `int_team_season_stats` — match results unpivoted to one row per team per match
+- `int_matches`: unified, de-duplicated match results from every source
+- `int_team_season_stats`: match results unpivoted to one row per team per match
 
-**Marts** (`transform/models/marts`) — the star schema consumed by BI:
+**Marts** (`transform/models/marts`): the star schema consumed by BI
 
 Dimensions
 - `dim_teams`, `dim_players`, `dim_seasons`, `dim_dates`
 
 Facts
-- `fct_standings` — current league table
-- `fct_matches` — match-level results
-- `fct_top_scorers` — goals, assists and per-90 efficiency
-- `fct_form_table` — last-5 form with a `WDL` string
-- `fct_points_progression` — cumulative points per matchweek
-- `fct_market_values` — squad value joined to league position
-- `fct_champions_history` — titles per club by season
+- `fct_standings`: current league table
+- `fct_matches`: match-level results
+- `fct_top_scorers`: goals, assists and per-90 efficiency
+- `fct_form_table`: last-5 form with a `WDL` string
+- `fct_points_progression`: cumulative points per matchweek
+- `fct_market_values`: squad value joined to league position
+- `fct_champions_history`: titles per club by season
 
 > dbt writes the models into the configured target schema, so the physical
 > schemas in DuckDB are named `marts_staging`, `marts_intermediate` and
@@ -143,9 +143,9 @@ Facts
 
 Data quality is enforced with dbt tests:
 
-- **Generic tests** — `unique`, `not_null`, `accepted_values` and
+- **Generic tests**: `unique`, `not_null`, `accepted_values` and
   `dbt_utils.accepted_range` across staging and marts columns.
-- **A custom generic test** —
+- **A custom generic test**:
   `assert_sources_agree_on_result` fails the build if API-Football and
   TheSportsDB disagree on the outcome of the same match.
 
@@ -237,8 +237,8 @@ dbt docs generate --profiles-dir .
 docker compose up --build
 ```
 
-- Airflow UI — http://localhost:8080 (DAG: `botola_bi_daily`, daily at 06:00)
-- Metabase — http://localhost:3000
+- Airflow UI: http://localhost:8080 (DAG: `botola_bi_daily`, daily at 06:00)
+- Metabase: http://localhost:3000
 
 To point Metabase at the warehouse, add a DuckDB connection with the database
 file at `/warehouse/botola.duckdb`.
